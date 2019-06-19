@@ -1,0 +1,28 @@
+{
+  "name" : "queensu/shibboleth-bundle",
+  "description" : "This bundle contains classes required for shibboleth authentication",
+  "type" : "symfony-bundle",
+  "authors" : [
+    {
+    "name" : "Jeremy Waugh",
+    "email" : "j.waugh@queensu.ca"
+    },
+    {
+      "name" : "Jody Steele",
+      "email" : "steelej@queensu.ca"
+    }
+  ],
+  "keywords" : [
+    "shibboleth authentication"
+  ],
+  "license" : [
+    "Queens"
+  ],
+  "require" : {
+  },
+  "autoload" : {
+    "psr-4" : {
+      "Queensu\\Shibboleth\\" : ""
+    }
+  }
+}
