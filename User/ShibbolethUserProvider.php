@@ -3,7 +3,6 @@
 namespace Queensu\Shibboleth\User;
 
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
@@ -11,26 +10,31 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 class ShibbolethUserProvider implements UserProviderInterface
 {
     private $request;
+    private $usernameHeader;
+    private $userClass;
 
-    public function __construct(RequestStack $stack)
+    public function __construct(RequestStack $stack, $userClass = ShibbolethUser::class, $usernameHeader='uid')
     {
         $this->request = $stack->getCurrentRequest();
+        if(!class_exists($userClass) || ($userClass !== ShibbolethUser::class && !array_key_exists(ShibbolethUser::class,class_parents($userClass))))
+            throw new \InvalidArgumentException("The class $userClass must exist, and must be or extend " . ShibbolethUser::class);
+        $this->userClass=$userClass;
+        $this->usernameHeader = $usernameHeader;
     }
 
     public function loadUserByUsername($username)
     {
-        if(!$username === $this->request->headers->get('uid')) {
+        if(!$username === $this->request->headers->get($this->usernameHeader)) {
             throw new UsernameNotFoundException('Username not found');
         }
-
-        return new ShibbolethUser(
-            $this->request->headers->get('uid'),
-            $this->request->headers->get('queensucaemplid'),
-            $this->request->headers->get('givenname'),
-            $this->request->headers->get('surname'),
-            $this->request->headers->get('common-name'),
-            $this->request->headers->get('email'),
-            ['ROLE_USER']
+        $headers = $this->userClass::extraHeaders();
+        $extraFields = array_combine(
+            array_keys($headers),
+            array_map(function($header) { return $this->request->headers->get($header); },$headers)
+        );
+        return new $this->userClass(
+            $this->request->headers->get($this->usernameHeader),
+            $extraFields
         );
     }
 
@@ -41,7 +45,7 @@ class ShibbolethUserProvider implements UserProviderInterface
 
     public function supportsClass($class)
     {
-        return $class === ShibbolethUser::class;
+        return $class === $this->userClass;
     }
 
 }
