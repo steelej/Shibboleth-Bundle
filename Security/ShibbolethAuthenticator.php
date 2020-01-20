@@ -23,6 +23,15 @@ class ShibbolethAuthenticator extends AbstractGuardAuthenticator
         "https://login.queensu.ca/idp/shibboleth"
     ];
 
+    private $idpHeader;
+    private $usernameHeader;
+
+    public function __construct($shibbolethIDPHeader='shib-identity-provider',$shibbolethUsernameHeader='uid')
+    {
+        $this->idpHeader=$shibbolethIDPHeader;
+        $this->usernameHeader=$shibbolethUsernameHeader;
+    }
+
     /**
      * In theory, this method should never end up being called.......
      *
@@ -54,7 +63,7 @@ class ShibbolethAuthenticator extends AbstractGuardAuthenticator
      */
     public function supports(Request $request)
     {
-        return $request->headers->has('shib-identity-provider');
+        return $request->headers->has($this->idpHeader);
     }
 
     /**
@@ -66,13 +75,13 @@ class ShibbolethAuthenticator extends AbstractGuardAuthenticator
      */
     public function getCredentials(Request $request)
     {
-        if(!$request->headers->has('shib-identity-provider') || !$request->headers->has('uid')){
+        if(!$request->headers->has($this->idpHeader) || !$request->headers->has($this->usernameHeader)){
             throw new \UnexpectedValueException('Invalid Shibboleth header.');
         }
 
         return [
-            'shib-identity-provider' => $request->headers->get('shib-identity-provider'),
-            'uid' => $request->headers->get('uid')
+            'shib-identity-provider' => $request->headers->get($this->idpHeader),
+            'uid' => $request->headers->get($this->usernameHeader)
         ];
     }
 
