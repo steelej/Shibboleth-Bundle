@@ -19,7 +19,7 @@
     "Queens"
   ],
   "require" : {
-    "php": "^7.0",
+    "php": ">=7.0",
     "symfony/framework-bundle": ">=4.3.0",
     "symfony/security-bundle": ">=4.3.0"
   },
