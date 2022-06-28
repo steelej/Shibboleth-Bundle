@@ -37,7 +37,7 @@ class ShibbolethUserProvider implements UserProviderInterface
             $extraFields
         );
     }
-    public function loadByIdentifier($identifer): UserInterface
+    public function loadUserByIdentifier($identifer): UserInterface
     {
         return $this->loadByUsename($identifier);
     }
