@@ -23,9 +23,14 @@ class ShibbolethUser implements UserInterface
         return $this->username;
     }
 
-    public function getRoles()
+    public function getRoles(): array
     {
         return $this->roles;
+    }
+    
+    public function getUserIdentifier(): string
+    {
+        return $this->username;
     }
 
     public function getPassword()
