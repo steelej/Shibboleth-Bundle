@@ -20,7 +20,8 @@ class ShibbolethAuthenticator extends AbstractGuardAuthenticator
 {
     const SHIB_URLS = [
         "https://idptest.queensu.ca/idp/shibboleth",
-        "https://login.queensu.ca/idp/shibboleth"
+	"https://login.queensu.ca/idp/shibboleth",
+	"https://sts.windows.net/d61ecb3b-38b1-42d5-82c4-efb2838b925c/"
     ];
 
     private $idpHeader;
